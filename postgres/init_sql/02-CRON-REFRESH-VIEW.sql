@@ -1,2 +1,2 @@
-SELECT CRON.schedule('*/2 * * * *', 'REFRESH MATERIALIZED VIEW rate_ranked_per_ccy_ordered_by_most_recent;');
-SELECT CRON.schedule('*/2 * * * *', 'REFRESH MATERIALIZED VIEW conversion_rates_led_table_mv;');
+SELECT CRON.schedule('0 */1 * * *', 'REFRESH MATERIALIZED VIEW rate_ranked_per_ccy_ordered_by_most_recent;');
+SELECT CRON.schedule('0 */1 * * *', 'REFRESH MATERIALIZED VIEW conversion_rates_led_table_mv;');
