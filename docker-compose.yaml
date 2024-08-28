@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  db:
+    build: ./postgres
+    container_name: "db_rates"
+    ports:
+      - "54325:5432"
+    volumes:
+      - ./postgres/custom/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./postgres/data:/custom_data
+      - ./postgres/init_sql:/init_sql
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-example}
+      POSTGRES_USER: ${POSTGRES_USER:-example}
+      POSTGRES_DB: ${POSTGRES_DB:-example}
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_cron"
+      - "-c"
+      - "cron.database_name=example"
+      - "-c"
+      - "cron.timezone=America/New_York"
