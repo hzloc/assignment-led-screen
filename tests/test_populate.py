@@ -68,7 +68,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_db_load(self):
         try:
-            while True:
+            for i in range(10000000000):
                 mock_update = generate_currency_updates_mock()
                 print(mock_update)
                 time.sleep(0.01)
@@ -80,8 +80,6 @@ class MyTestCase(unittest.TestCase):
         except Exception as exc:
             print(exc)
         finally:
-            self.connection.execute(text("refresh materialized view recent_rates_in_ny_tz;"))
-            self.connection.execute(text("refresh materialized view currencly_led_table;"))
             self.connection.commit()
             self.connection.close()
 
