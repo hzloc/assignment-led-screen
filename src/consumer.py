@@ -104,7 +104,7 @@ def fetch_and_transform_currency_rates(tp) -> pd.DataFrame:
 
 
 log.info("Led conversition table - minutely refreshed rates")
-schedule.every(1).days.do(run_fetch)
+schedule.every(1).minutes.do(run_fetch)
 schedule.every(1).days.at(time_str="17:00", tz="America/New_York").do(insert_rates_to_db)
 
 if __name__ == '__main__':

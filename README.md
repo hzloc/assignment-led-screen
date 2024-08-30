@@ -12,15 +12,26 @@ in rates_sample.csv
 
 
 ## to run
-```shell
-pip install -r requirements.txt
-```
+
 To setup kafka:
 ```shell
 docker-compose up --build
 ```
+To download requirements:
+```shell
+pip install -r requirements.txt
+```
 To populate the exchange rates please run and run analysis
 ```shell
-run.sh
+ python -m src.producer
+```
+To see the Led table please run:
+```shell
+python -m src.consumer
+```
+
+To clean 
+```shell
+teardown.sh
 ```
 
