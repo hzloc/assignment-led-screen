@@ -1,0 +1,1 @@
+from src.faker.rates import create_mock_rate
