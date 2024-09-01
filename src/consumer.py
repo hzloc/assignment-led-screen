@@ -1,14 +1,13 @@
+import concurrent.futures
 import os
 import time
-from typing import Dict, List
-import pendulum
+
 import pandas as pd
+import pendulum
 import schedule
-from kafka import OffsetAndMetadata, TopicPartition
+from kafka import TopicPartition
 from kafka.consumer import KafkaConsumer
 from sqlalchemy import create_engine, text
-
-import concurrent.futures
 
 from src.logger import log
 from src.serializer.json_serializer import JSONSerializer

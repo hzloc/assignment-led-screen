@@ -2,9 +2,11 @@ import random
 import time
 import pendulum
 
-def create_mock_rate() -> dict:
+
+def create_mock_rate(start_mocking_from_date: pendulum.DateTime) -> dict:
     event_id = random.randint(1, 10000000000000000)
-    event_time = pendulum.now("UTC").int_timestamp
+    # time * 1000 is due to the compability with rates_sample.csv
+    event_time = int(start_mocking_from_date.float_timestamp * 1000)
     rate = random.uniform(0.5, 2.0)
     ccy_couple = random.choice(("AUDUSD", "EURGBP", "EURUSD", "GBPUSD", "NZDUSD"))
     return {

@@ -1,0 +1,4 @@
+2024-09-01 10:55:48,940 - INFO - faust.py - <FXRate: event_id=4798772890663072, event_time=1725138000000, rate=1.074977490370675, ccy_couple='GBPUSD'>
+2024-09-01 11:18:29,753 - INFO - faust.py - <FXRate: event_id=1646612502076150, event_time=1725138000000, rate=1.9749559348284342, ccy_couple='AUDUSD'>
+2024-09-01 11:20:53,351 - INFO - faust.py - <FXRate: event_id=3501254078370898, event_time=1725138000000, rate=1.2179865162226622, ccy_couple='GBPUSD'>
+2024-09-01 11:21:55,844 - INFO - faust.py - <FXRate: event_id=2719521352538791, event_time=1725138000000, rate=1.5379203988106647, ccy_couple='EURGBP'>

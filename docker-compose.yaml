@@ -12,7 +12,6 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
 
   controller-2:
     image: apache/kafka:latest
@@ -25,7 +24,6 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
 
 
   controller-3:
@@ -39,12 +37,16 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
 
 
   broker-1:
     image: apache/kafka:latest
     container_name: broker-1
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "broker-1:19092", "--list"]
+      interval: 10s
+      timeout: 1m
+      retries: 8
     ports:
       - 29092:9092
     environment:
@@ -57,8 +59,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
-
     depends_on:
       - controller-1
       - controller-2
@@ -67,6 +67,11 @@ services:
   broker-2:
     image: apache/kafka:latest
     container_name: broker-2
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "broker-2:19092", "--list"]
+      interval: 10s
+      timeout: 1m
+      retries: 8
     ports:
       - 39092:9092
     environment:
@@ -79,7 +84,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
     depends_on:
       - controller-1
       - controller-2
@@ -88,6 +92,11 @@ services:
   broker-3:
     image: apache/kafka:latest
     container_name: broker-3
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "broker-3:19092", "--list"]
+      interval: 10s
+      timeout: 1m
+      retries: 8
     ports:
       - 49092:9092
     environment:
@@ -100,7 +109,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_NUM_PARTITIONS: 300
     depends_on:
       - controller-1
       - controller-2
@@ -109,18 +117,22 @@ services:
   init-kafka:
     image: apache/kafka:latest
     depends_on:
-      - controller-1
+      broker-3:
+        condition: service_healthy
+      broker-1:
+        condition: service_healthy
+      broker-2:
+        condition: service_healthy
     entrypoint: [ '/bin/sh', '-c' ]
     command: |
       "
       # blocks until kafka is reachable
-      kafka-topics --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --list
+      /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --list topic
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --create --if-not-exists --topic rates --replication-factor 1 --partitions 300
+      /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --create --if-not-exists --topic rates --replication-factor 1 --partitions 300
 
-      echo -e 'Successfully created the following topics:'
-      kafka-topics --bootstrap-server kafka:29092 --list
+      echo -e "Successfully created the following topics: $(/opt/kafka/bin/kafka-topics.sh --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --list topic)"
       "
   db:
     container_name: db
