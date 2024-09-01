@@ -22,5 +22,3 @@ def create_file_logger(logger_name: str = 'default') -> logging.Logger:
     logger.addHandler(console_handler)
     return logger
 
-
-log = create_logger("babysitter")

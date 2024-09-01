@@ -134,14 +134,20 @@ services:
 
       echo -e "Successfully created the following topics: $(/opt/kafka/bin/kafka-topics.sh --bootstrap-server broker-1:19092,broker-2:19092,broker-3:19092 --list topic)"
       "
-  db:
-    container_name: db
-    image: postgres:14.5
-    ports:
-      - "5433:5432"
+
+  producer:
+    build: .
+    depends_on:
+      init-kafka:
+        condition: service_completed_successfully
     environment:
-      POSTGRES_PASSWORD: realtime
-      POSTGRES_DB: realtime
-      POSTGRES_USER: realtime
-    volumes:
-      - ./postgres/:/docker-entrypoint-initdb.d/
+      ENV: "dev"
+
+  consumer:
+    build: .
+    depends_on:
+      init-kafka:
+        condition: service_completed_successfully
+    environment:
+      ENV: "dev"
+    command: ["python", "-m", "src.main", "worker", "-l", "info"]
